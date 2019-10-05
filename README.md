@@ -1,27 +1,113 @@
-# MyFirstApp
+# 1.   DEFINE A NEW ACTION - action.ts
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.0.
+## 1.1. Create a constant with an action name
 
-## Development server
+```typescript
+export const ADD_INGREDIENTS = 'ADD_INGREDIENTS';
+```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## 1.2. Create a class of the action name, use the action as the type
+```typescript
+export class AddIngredients implements Action {
+    readonly type = ADD_INGREDIENTS;
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+    constructor(public payload: Ingredient[]) {}
+}
+```
 
-## Build
+## 1.3. Export is as an actions bundle
+```typescript
+export type ShoppingListActions = AddIngredient | AddIngredientS;
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Running unit tests
+# 2.   DEFINE THE ACTION IN THE REDUCER - reducer.ts
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## 2.1. Already defined initial state
+```typescript
+// all imports
 
-## Running end-to-end tests
+const initialState = {
+    ingredients: [
+      new Ingredient('Apples', 5),
+      new Ingredient('Potatoes', 3)
+    ]
+};
+```
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## 2.2. Define the case of state for the action
+```typescript
+export function ShoppingListReducer(state = initialState,
+                  action: ShoppingListActions.ShoppingListActions) {
 
-## Further help
+    switch (action.type) {
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+      case ShoppingListActions.ADD_INGREDIENT:
+        return {
+            ...state,
+            ingredients: [...state.ingredients, action.payload]
+        };
+
+      case case ShoppingListActions.ADD_INGREDIENTS:
+          return {
+            // get current state
+            ...state,
+            // change the current state's property ingredients
+            // [load current ingredients, add new ones]
+            ingredients: [...state.ingredients, ...action.payload]
+          };
+
+      default:
+          return state;
+
+    }
+}
+```
+
+# 3. DISPATCH THE ACTION - component.ts/service.ts
+
+## 3.1. Import actions
+
+```typescript
+import * as ShoppingListActions from 'path/shopping-list.actions';
+```
+
+## 3.2. When you want to dispatch an action, have the Redux store injected
+
+```typescript
+import * as ShoppingListActions from 'path/shopping-list.actions';
+import { Ingredient } from 'path/ingredient.model.ts';
+
+import { Store } from '@ngrx/store';
+
+@Injectable() 
+export class RecipeService {
+  // service logic
+
+  constructor(private store: Store<{shoppingList:         {ingredients: Ingredient[]}}>) {}
+
+  // service logic
+}
+```
+
+## 3.3. Dispatch the action where it needs to be
+```typescript
+import * as ShoppingListActions from 'path/shopping-list.actions';
+import { Ingredient } from 'path/ingredient.model.ts';
+
+import { Store } from '@ngrx/store';
+
+@Injectable() 
+export class RecipeService {
+  // service logic
+
+  constructor(private store: Store<{shoppingList:         {ingredients: Ingredient[]}}>) {}
+
+  // service logic
+
+  onAddToShoppingList(ingredients: Ingredient[]) {
+    this.store.dispatch(new ShoppingListActions.AddIngredients(this.recipe.ingredients));
+  }
+}
+```
