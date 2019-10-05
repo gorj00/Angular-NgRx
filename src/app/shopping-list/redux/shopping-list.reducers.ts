@@ -1,5 +1,5 @@
 import * as ShoppingListActions from './shopping-list.actions';
-import { Ingredient } from '../../../shared/ingredient.model';
+import { Ingredient } from '../../shared/ingredient.model';
 
 // Reducer functions is triggered whenever an action is dispatched
 

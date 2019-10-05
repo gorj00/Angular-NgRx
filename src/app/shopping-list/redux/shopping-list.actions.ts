@@ -8,7 +8,7 @@ export class AddIngredient implements Action {
   readonly type = ADD_INGREDIENT;
 
   // optionally, additional data to pass
-  payload: Ingredient;
+  constructor(public payload: Ingredient) {}
 }
 
 export type ShoppingListActions = AddIngredient;

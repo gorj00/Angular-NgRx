@@ -17,6 +17,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   constructor(private slService: ShoppingListService,
               // store of type as registered in app.module
+              // type  - global state
               private store: Store<{shoppingList:         {ingredients: Ingredient[]}}>) { }
 
   ngOnInit() {
