@@ -111,3 +111,77 @@ export class RecipeService {
   }
 }
 ```
+
+
+# 4. CREATE EFFECTS - effects.ts
+Side effects are used mainly for asynchrnous effects that **don't change the state** but are needed for an action (fetching data, for example).
+
+- run command: `npm instal --save @ngrx/effects`
+
+## 4.1. Register EffectsModule in AppModule
+```typescript
+// *.module.ts
+
+import { EffectsModule } from '@ngrx/effects';
+import { AuthEffects } from 'path/auth.effects';
+
+// ...module logic
+imports: [
+  // ...other imports
+  EffectsModule.forRoot([AuthEffects])
+]
+// module logic...
+```
+
+## 4.2. Create Effects file
+```typescript
+// AuthEffects file
+
+import { Acions, tEffect } from '@ngrx/effects';
+import { Injectable } from '@angular/core';
+import * as firebase from 'firebase';
+import { map, switchMap, mergeMap } from 'rxjs/operators';
+import { from } from 'rxjs';
+
+import * as AuthActions from 'path/auth.actions';
+
+@Injectable()
+export class AuthEffects {
+
+  // If NOT dispatching any other action at the end of the effect to change the state
+  // @Effect({dispatch: false})
+
+  @Effect()
+  authSignup = this.actions
+    // will fire only if the action is of the following type
+    ofType(AuthActions.TRY_SIGNUP)
+    pipe(
+      map((action: AuthActions.TrySignup) => {
+        return action.payload;
+      }),
+      // will get whatever map returns
+      switchMap((authData: {username: string, password: string}) => {
+        return from(firebase.auth().createUserWithEmailAndPassword(authData.username, authData.password));
+      }),
+      switchMap(() => {
+        return from(firebase.auth().currentUser.getToken());
+      }),
+      // returns observable
+      mergeMap((token: string) => {
+        return [
+          {
+            type: AuthActions.SIGNUP
+          },
+          {
+            type: AuthActions.SET_TOKEN,
+            payload: token
+          }
+        ]
+      })
+
+    ); 
+
+  constructor(private actions: Actions) {}
+}
+```
+
