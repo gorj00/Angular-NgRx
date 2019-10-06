@@ -49,7 +49,7 @@ export function ShoppingListReducer(state = initialState,
             ingredients: [...state.ingredients, action.payload]
         };
 
-      case case ShoppingListActions.ADD_INGREDIENTS:
+      case ShoppingListActions.ADD_INGREDIENTS:
           return {
             // get current state
             ...state,
@@ -85,7 +85,7 @@ import { Store } from '@ngrx/store';
 export class RecipeService {
   // service logic
 
-  constructor(private store: Store<{shoppingList:         {ingredients: Ingredient[]}}>) {}
+  constructor(private store: Store<{shoppingList: {ingredients: Ingredient[]}}>) {}
 
   // service logic
 }
@@ -102,7 +102,7 @@ import { Store } from '@ngrx/store';
 export class RecipeService {
   // service logic
 
-  constructor(private store: Store<{shoppingList:         {ingredients: Ingredient[]}}>) {}
+  constructor(private store: Store<{shoppingList: {ingredients: Ingredient[]}}>) {}
 
   // service logic
 
